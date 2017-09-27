@@ -47,7 +47,7 @@ void AddEdge(char direction, char X, char Y, int cost, int array[30][30])
 
 }
 int main() {
-	freopen("in.txt", "r", stdin);
+	//freopen("in.txt", "r", stdin);
 	int arr1[30][30];
 	int arr2[30][30];
 	int n, v;
