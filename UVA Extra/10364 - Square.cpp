@@ -14,14 +14,12 @@ using namespace std;
 #define pnl() printf("\n")
 #define pl(x) printf("%lld", x)
 #define pf(x) printf("%.6lf", x)
-
 #define isOn(S, j) (S & (1 << j))
 #define setBit(S, j) (S |= (1 << j))
 #define clearBit(S, j) (S &= ~(1 << j))
 #define toggleBit(S, j) (S ^= (1 << j))
 #define lowBit(S) (S & (-S))
 #define setAll(S, n) (S = (1 << n) - 1)
-
 #define sz(v) ((int)((v).size()))
 #define ssz(s) ((int)strlen(s))
 #define f first
@@ -40,44 +38,78 @@ typedef pair<int, int> ii;
 typedef pair<ll, ll> pll;
 typedef vector<int> vi;
 typedef vector<ii> vii;
-int arr[10100], l1[10100], l2[10100], ret1[10100], ret2[10100];
+int  arr[50];
+int vis[50];
+int n;
+int memo[50][2234567];
+int ch[4];
+bool che(int taken) {
+	int num = 0, sum = 0;
+	repi(i,0, n)
+	{
+		if (isOn(taken, i)) {
+			num++;
+			sum += arr[i];
+		}
+	}
+	if (!(num >= 4 && sum % 4 == 0))
+		return false;
+	int avg = sum / 4;
+	memset(ch, 0, sizeof ch);
+	repi(i,0, n)
+	{
+		if (isOn(taken, i)) {
+			repi(j,0,4){
+				if(ch[j] + arr[i] <= avg){
+					ch[j] += arr[i];
+					break;
+				}
+			}
+		}
+	}
+	repi(i,0,4){
+		if(ch[i] == avg)
+			continue;
+		return false;
+	}
+	return true;
+
+}
+int solve(int inx, int taken) {
+	int &ret = memo[inx][taken];
+	if (ret != -1)
+		return ret;
+	if (inx == n)
+		return ret = che(taken);
+	if (che(taken))
+		return ret = 1;
+	ret = 0;
+	int tt = taken;
+	setBit(taken, inx);
+	return ret = (solve(inx + 1, taken) || solve(inx + 1, tt));
+
+}
 int main() {
-
-
-	//freopen("in.txt","r", stdin);
-	int n;
-	while (rint(n) == 1) {
-		repi(i,0,n)
+	freopen("in.txt","r", stdin);
+	int t;
+	rint(t);
+	while (t--) {
+		memset(vis, 0, sizeof vis);
+		memset(memo, -1, sizeof memo);
+		rint(n);
+		int ss = 0;
+		repi(i,0, n)
 		{
 			rint(arr[i]);
+			ss += arr[i];
 		}
-		int lis = 0;
-		repi(i,0,n)
-		{
-			int pos = lower_bound(l1, l1 + lis, arr[i]) - l1;
-			l1[pos] = arr[i];
-			if (pos + 1 > lis) {
-				lis = pos + 1;
-			}
-			ret1[i] = lis;
-		}
-		reverse(arr, arr + n);
-		lis = 0;
-		repi(i,0,n)
-		{
-			int pos = lower_bound(l2, l2 + lis, arr[i]) - l2;
-			l2[pos] = arr[i];
-			if (pos + 1 > lis) {
-				lis = pos + 1;
-			}
-			ret2[i] = lis;
-		}
-		reverse(ret2,ret2 + n);
-		int mx = -1;
-		repi(i,0,n)
-			if(ret1[i]== ret2[i])
-				mx = max(mx, ret1[i]);
-		pint((mx - 1) * 2 + 1), pnl();
+
+		if (solve(0,0) && ss % 4 == 0)
+			puts("yes");
+		else
+			puts("no");
+
 	}
+
 	return 0;
 }

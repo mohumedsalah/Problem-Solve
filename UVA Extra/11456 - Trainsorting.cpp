@@ -1,6 +1,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 #define repi(i, j, n) 		for(int i=(j);i<(int)(n);++i)
+#define repd(i, j, n) 		for(int i=(j);i>=(int)(n);--i)
 #define rln() getchar()
 #define rint(n) scanf("%d",&n)
 #define rs(n) scanf("%s",n)
@@ -14,14 +15,12 @@ using namespace std;
 #define pnl() printf("\n")
 #define pl(x) printf("%lld", x)
 #define pf(x) printf("%.6lf", x)
-
 #define isOn(S, j) (S & (1 << j))
 #define setBit(S, j) (S |= (1 << j))
 #define clearBit(S, j) (S &= ~(1 << j))
 #define toggleBit(S, j) (S ^= (1 << j))
 #define lowBit(S) (S & (-S))
 #define setAll(S, n) (S = (1 << n) - 1)
-
 #define sz(v) ((int)((v).size()))
 #define ssz(s) ((int)strlen(s))
 #define f first
@@ -40,44 +39,47 @@ typedef pair<int, int> ii;
 typedef pair<ll, ll> pll;
 typedef vector<int> vi;
 typedef vector<ii> vii;
-int arr[10100], l1[10100], l2[10100], ret1[10100], ret2[10100];
+int arr[2500];
+int ret1[2500];
+int ret2[2500];
+int l1[2500];
 int main() {
-
-
-	//freopen("in.txt","r", stdin);
-	int n;
-	while (rint(n) == 1) {
+	freopen("in.txt", "r", stdin);
+	int t, n;
+	rint(t);
+	while (t--) {
+		memset(l1, 0, sizeof l1);
+		rint(n);
 		repi(i,0,n)
 		{
 			rint(arr[i]);
 		}
-		int lis = 0;
-		repi(i,0,n)
+		repd(i,n - 1,0)
 		{
-			int pos = lower_bound(l1, l1 + lis, arr[i]) - l1;
-			l1[pos] = arr[i];
-			if (pos + 1 > lis) {
-				lis = pos + 1;
+			int cur = 1;
+			repd(j,n - 1,i)
+			{
+				if (arr[i] > arr[j] && cur < l1[j] + 1)
+					cur = l1[j] + 1;
+				l1[i] = cur;
 			}
-			ret1[i] = lis;
+			ret1[i] = cur;
 		}
-		reverse(arr, arr + n);
-		lis = 0;
-		repi(i,0,n)
+		repd(i,n - 1,0)
 		{
-			int pos = lower_bound(l2, l2 + lis, arr[i]) - l2;
-			l2[pos] = arr[i];
-			if (pos + 1 > lis) {
-				lis = pos + 1;
+			int cur = 1;
+			repd(j,n - 1,i)
+			{
+				if (arr[i] < arr[j] && cur < l1[j] + 1)
+					cur = l1[j] + 1;
+				l1[i] = cur;
 			}
-			ret2[i] = lis;
+			ret2[i] = cur;
 		}
-		reverse(ret2,ret2 + n);
-		int mx = -1;
-		repi(i,0,n)
-			if(ret1[i]== ret2[i])
-				mx = max(mx, ret1[i]);
-		pint((mx - 1) * 2 + 1), pnl();
+		int ans = 0;
+		repi(i,0, n)
+			ans = max(ans, ret1[i] + ret2[i] - 1);
+		pint(ans), pnl();
 	}
 	return 0;
 }
