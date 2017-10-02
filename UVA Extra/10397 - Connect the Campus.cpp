@@ -61,7 +61,7 @@ void unionSet(int i, int j) {
 	}
 }
 int main() {
-	freopen("in.txt", "r", stdin);
+	//freopen("in.txt", "r", stdin);
 	int n, m, xx, yy;
 	while (cin >> n) {
 
