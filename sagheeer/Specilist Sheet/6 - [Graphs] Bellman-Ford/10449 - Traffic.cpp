@@ -38,44 +38,75 @@ typedef pair<int, int> ii;
 typedef pair<ll, ll> pll;
 typedef vector<int> vi;
 typedef vector<ii> vii;
-vii arr[12340];
-int dis[12340];
-int main(){
-	//freopen("in.txt","r", stdin);
-	int t, n ,m,xx, yy, zz;
-	rint(t);
-	while(t--){
-
-		rint(n), rint(m);
+int v[250];
+vi arr[250];
+int dis[250];
+int main() {
+	//freopen("in.txt", "r", stdin);
+	int n, m, xx, yy, cnt = 0;
+	while (cin >> n) {
 		repi(i,0, n)
-			arr[i].clear(),dis[i] = INF;
-		repi(i,0,m){
-			scanf("%d%d%d",&xx,&yy,&zz);
-			arr[xx].pb(ii(yy, zz));
+		{
+			arr[i].clear();
+			dis[i] = INF;
+		}
+		repi(i,0,n)
+		{
+			rint(v[i]);
+		}
+		rint(m);
+		repi(i,0,m)
+		{
+			rint(xx), rint(yy);
+			xx--, yy--;
+			arr[xx].pb(yy);
 		}
 		dis[0] = 0;
-		repi(i,0,n-1)
-			repi(u,0,n)
-				repi(j,0,sz(arr[u])){
-					ii v = arr[u][j];
-					dis[v.f] = min(dis[v.f] , dis[u] + v.s);
-				}
 		int fl = 1;
-		repi(u,0, n)
-			repi(j,0, sz(arr[u])){
-				ii v = arr[u][j];
-				if(dis[v.f] > dis[u] + v.s)
-					fl = 0;
+		for (int i = 0; i < n - 1 && fl; i++) {
+			fl = 0;
+			repi(u,0,n)
+			{
+				repi(j,0,sz(arr[u]))
+				{
+					int cost = v[arr[u][j]] - v[u];
+					cost = cost * cost * cost;
+					int V = arr[u][j];
+					if (dis[V] > dis[u] + cost && dis[u] != INF)
+						dis[V] = dis[u] + cost, fl = 1;
+				}
 			}
-		if(!fl)
-			puts("possible");
-		else
-			puts("not possible");
-
-
+		}
+		for (int i = 0; i < n && fl; i++) {
+			fl = 0;
+			repi(u,0,n)
+			{
+				repi(j,0,sz(arr[u]))
+				{
+					int cost = v[arr[u][j]] - v[u];
+					cost = cost * cost * cost;
+					int V = arr[u][j];
+					if (dis[V] > dis[u] + cost && dis[u] != INF ){
+						dis[V] = dis[u] + cost, fl = 1;
+							dis[V] = -INF;
+					}
+				}
+			}
+		}
+		int q;
+		rint(q);
+		printf("Set #%d\n", ++cnt);
+		while (q--) {
+			rint(xx);
+			xx--;
+			//cout << dis[xx] << endl;
+			if (dis[xx] >= 3 && dis[xx] != INF)
+				pint(dis[xx]), pnl();
+			else
+				puts("?");
+		}
 
 	}
-
 
 	return 0;
 }
