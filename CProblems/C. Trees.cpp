@@ -38,77 +38,36 @@ typedef pair<int, int> ii;
 typedef pair<ll, ll> pll;
 typedef vector<int> vi;
 typedef vector<ii> vii;
-
-
-vi arr[1000];
-vector<vi> comps;
-int dfsnum[1000], comp[1000], dfslow[1000], instk[1000];
-stack<int> stk;
-int cntd = 0;
-void scc(int inx) {
-	dfslow[inx] = dfsnum[inx] = cntd++;
-	stk.push(inx);
-	instk[inx] = 1;
-	repi(i,0, sz(arr[inx]))
-	{
-		int v = arr[inx][i];
-		if (dfsnum[v] == -1) {
-			scc(v);
-			dfslow[inx] = min(dfslow[v], dfslow[inx]);
-		} else if (instk[v]) {
-			dfslow[inx] = min(dfslow[v], dfslow[inx]);
-		}
-	}
-	if (dfslow[inx] == dfsnum[inx]) {
-		comps.push_back(vector<int>());
-		int x = -1;
-		while (x != inx) {
-			x = stk.top();
-			stk.pop();
-			comps.back().push_back(x);
-			comp[x]= sz(comps) - 1;
-		}
-	}
-	instk[inx] = 0;
-}
-
+int arr[123456];
+int ifans[123456];
 int main() {
 
-	memset(dfsnum, -1, sizeof dfsnum);
-	int n,m,xx,yy;
-	rint(n), rint(m);
-	repi(i,0,n)
-		arr[i].clear();
-	comps.clear();
-	repi(i,0,m){
-		rint(xx), rint(yy);
-		arr[xx].pb(yy);
+	int n;
+	rint(n);
+	int t = ceil(n / 2.0);
+	repi(i,0, n)
+	{
+		rint(arr[i]);
 	}
-	scc(1);
-	repi(i,0,sz(comps)){
-		repi(j,0,sz(comps[i]))
-				pint(comps[i][j]),psp();
-		pnl();
+	repi(i, 0 , t)
+	{
+		if ((arr[i] - i) > 0) {
+			ifans[arr[i] - i]++;
+		}
 	}
+	repi(i, t , n)
+	{
+		if ((arr[i] - (n - 1) + i) > 0) {
+			ifans[arr[i] - (n - 1) + i]++;
+		}
+	}
+	int mx = 0;
+	repi(i,0, 1e5 + 9){
+		mx = max(mx,ifans[i]);
+	}
+	cout << n - mx << endl;
+
+
 
 	return 0;
 }
-/*
- *
- *input like this
- *
- * 11 13
-1 2
-2 11
-2 6
-2 4
-2 5
-5 1
-4 5
-4 9
-9 10
-10 4
-6 7
-7 8
-8 6
- */

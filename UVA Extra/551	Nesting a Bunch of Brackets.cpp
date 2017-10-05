@@ -40,75 +40,66 @@ typedef vector<int> vi;
 typedef vector<ii> vii;
 
 
-vi arr[1000];
-vector<vi> comps;
-int dfsnum[1000], comp[1000], dfslow[1000], instk[1000];
-stack<int> stk;
-int cntd = 0;
-void scc(int inx) {
-	dfslow[inx] = dfsnum[inx] = cntd++;
-	stk.push(inx);
-	instk[inx] = 1;
-	repi(i,0, sz(arr[inx]))
-	{
-		int v = arr[inx][i];
-		if (dfsnum[v] == -1) {
-			scc(v);
-			dfslow[inx] = min(dfslow[v], dfslow[inx]);
-		} else if (instk[v]) {
-			dfslow[inx] = min(dfslow[v], dfslow[inx]);
-		}
-	}
-	if (dfslow[inx] == dfsnum[inx]) {
-		comps.push_back(vector<int>());
-		int x = -1;
-		while (x != inx) {
-			x = stk.top();
-			stk.pop();
-			comps.back().push_back(x);
-			comp[x]= sz(comps) - 1;
-		}
-	}
-	instk[inx] = 0;
+stack<char> checker;
+map<char, char> mpp;
+bool isOpening(char c) {
+	if (c == '(' || c == '[' || c == '<' || c == '{')
+		return true;
+	return false;
+}
+
+bool isClosing(char c) {
+	if (c == ')' || c == ']' || c == '>' || c == '}')
+		return true;
+	return false;
 }
 
 int main() {
+	mpp['>'] = '<';
+	mpp[')'] = '(';
+	mpp[']'] = '[';
+	mpp['}'] = '{';
+	char s[3001];
+	while (gets(s)) {
+		int count = 0;
+		int len = strlen(s), i;
+		for (i = 0; i < len; i++) {
+			count++;
+			if (isOpening(s[i])) {
+				if (s[i] == '(' && s[i + 1] == '*') {
+					checker.push('*');
+					i++;
+				} else {
+					checker.push(s[i]);
+				}
+			} else if (isClosing(s[i]) || (s[i] == '*' && s[i + 1] == ')')) {
+				if (checker.empty())
+					break;
+				if (s[i] == '*') {
+					if (checker.top() != '*') {
+						break;
+					}
+					checker.pop();
+					i++;
+				} else {
+					if (checker.top() != mpp[s[i]]) {
+						break;
+					}
+					checker.pop();
+				}
+			}
+		}
 
-	memset(dfsnum, -1, sizeof dfsnum);
-	int n,m,xx,yy;
-	rint(n), rint(m);
-	repi(i,0,n)
-		arr[i].clear();
-	comps.clear();
-	repi(i,0,m){
-		rint(xx), rint(yy);
-		arr[xx].pb(yy);
-	}
-	scc(1);
-	repi(i,0,sz(comps)){
-		repi(j,0,sz(comps[i]))
-				pint(comps[i][j]),psp();
-		pnl();
+		if (i < len || !checker.empty()) {
+			if (i >= len && !checker.empty())
+				count++;
+			printf("NO %d\n", count);
+		} else
+			printf("YES\n");
+
+		while (!checker.empty())
+			checker.pop();
 	}
 
 	return 0;
 }
-/*
- *
- *input like this
- *
- * 11 13
-1 2
-2 11
-2 6
-2 4
-2 5
-5 1
-4 5
-4 9
-9 10
-10 4
-6 7
-7 8
-8 6
- */
