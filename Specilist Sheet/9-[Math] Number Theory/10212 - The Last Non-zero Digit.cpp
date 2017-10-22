@@ -38,8 +38,8 @@ typedef pair<int, int> ii;
 typedef pair<ll, ll> pll;
 typedef vector<int> vi;
 typedef vector<ii> vii;
-ll _sieve_size;
 bitset<10000010> bs;
+ll _sieve_size;
 vi primes;
 void sieve(ll upperbound) {
 	_sieve_size = upperbound + 1;
@@ -52,36 +52,54 @@ void sieve(ll upperbound) {
 			primes.push_back((int) i);
 		}
 }
-ll EulerPhi(ll N) {
-	ll PF_idx = 0, PF = primes[PF_idx], ans = N;
+ll numDiv(ll N) {
+	ll PF_idx = 0, PF = primes[PF_idx], ans = 1;
 	while (PF * PF <= N) {
-		if (N % PF == 0)
-			ans -= ans / PF;
-		while (N % PF == 0)
+		ll power = 0;
+		while (N % PF == 0) {
 			N /= PF;
+			power++;
+		}
+		ans *= (power + 1);
 		PF = primes[++PF_idx];
 	}
 	if (N != 1)
-		ans -= ans / N;
+		ans *= 2;
 	return ans;
 }
-ll ans[600000];
-ll solve(ll inx){
-	ll &ret = ans[inx];
-	if(ret != -1)
-		return ret;
-	if(inx == 1)
-		return ans[inx] = 1ll;
-	return ret = solve(inx - 1) + 2ll * EulerPhi(inx);
+ll sumDiv(ll N) {
+	ll PF_idx = 0, PF = primes[PF_idx], ans = 1;
+	while (PF * PF <= N) {
+		ll power = 0;
+		while (N % PF == 0) {
+			N /= PF;
+			power++;
+		}
+		ans *= ((ll) pow((double) PF, power + 1.0) - 1) / (PF - 1);
+		PF = primes[++PF_idx];
+	}
+	if (N != 1)
+		ans *= ((ll) pow((double) N, 2.0) - 1) / (N - 1); // last
+	return ans;
 }
+int xx, a, b,k;
 int main() {
-	//freopen("in.txt", "r" , stdin);
-	memset(ans , -1 , sizeof ans);
+	freopen("in.txt", "r", stdin);
 	sieve(10000000ll);
-	ll n;
-	while(rl(n) && n){
-		pl(solve(ll(n)));
-		pnl();
+	int t;
+	ll ans1, ans2;
+	rint(t);
+	while(t--){
+		ans1 = 0, ans2 = 0;
+		rint(a), rint(b), rint(k);
+		repi(i,a, b + 1){
+			if(i % k == 0){
+				ans1 +=numDiv(ll(i));
+				ans2 +=sumDiv(ll(i));
+			}
+		}
+		pl(ans1), psp(), pl(ans2),pnl();
 	}
 	return 0;
 }
+
