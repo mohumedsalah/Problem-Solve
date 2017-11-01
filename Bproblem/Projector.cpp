@@ -1,38 +1,53 @@
+//============================================================================
+// Name        : projector.cpp
+// Author      : 
+// Version     :
+// Copyright   : Your copyright notice
+// Description : Hello World in C++, Ansi-style
+//============================================================================
+
 #include <bits/stdc++.h>
-
 using namespace std;
-typedef pair<int, int> ii;
-#define f first
-#define s second
-int vis[110][110];
-int n, m, q, xx, yy, cc;
-vector<ii> arr[105];
-int des;
-int solve(int inx, int cl) {
-	vis[inx][cl] = 1;
-	if (inx == des)
-		return 1;
-	int ret = 0;
-	for (int i = 0; i < (int)arr[inx].size(); i++) {
-		if (vis[arr[inx][i].f][arr[inx][i].s] == -1 && (arr[inx][i].s == cl|| cl == -1))
-			ret += solve(arr[inx][i].f, arr[inx][i].s);
-	}
-	return ret;
+typedef pair<double, double> dd;
+struct rec {
+	double x1;
+	double x2;
+	double y1;
+	double y2;
+};
+rec xxyy(double x1, double y1, double x2, double y2) {
+	rec n;
+	n.x1 = x1, n.x2 = x2, n.y1 = y1, n.y2 = y2;
+	return n;
 }
+vector<rec> nn;
 int main() {
-
-	cin >> n >> m;
-	for (int i = 0; i < m; i++) {
-		cin >> xx >> yy >> cc;
-		arr[xx].push_back(ii(yy, cc));
-		arr[yy].push_back(ii(xx, cc));
+	//freopen("in.txt", "r", stdin);
+	//freopen("out.txt", "w", stdout);
+	double xx, yy, x, y;
+	while (getchar() == 'r') {
+		scanf("%lf%lf%lf%lf", &xx, &yy, &x, &y);
+		nn.push_back(xxyy(xx, yy, x, y));
+		getchar();
 	}
-	cin >> q;
-	for (int i = 0; i < q; i++) {
-		memset(vis, -1, sizeof vis);
-		cin >> xx >> yy;
-		des = yy;
-		cout << solve(xx, -1) << endl;
+	getchar();
+	int cnt = 0;
+	string s;
+	while (scanf("%lf%lf", &xx, &yy)) {
+		if(xx == 9999.9 && yy == 9999.9)
+			return 0;
+		cnt++;
+		int f = 1;
+		for (int j = 0; j < (int)nn.size(); j++) {
+			if (xx> nn[j].x1 && xx < nn[j].x2
+					&& yy > nn[j].y2 && yy < nn[j].y1) {
+				f = 0;
+				printf("Point %d is contained in figure %d\n", cnt , j + 1);
+			}
+		}
+		if(f){
+			printf("Point %d is not contained in any figure\n",cnt);
+		}
 	}
 	return 0;
 }
